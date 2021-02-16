@@ -1,20 +1,11 @@
-package com.restfull.dto;
+package com.restfull.controller.request;
 
-public class Soldier {
-    private Long id;
+public class SoldierEditRequest {
     private String cpf;
     private String name;
     private String race;
     private String weapon;
     private String status;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getCpf() {
         return cpf;

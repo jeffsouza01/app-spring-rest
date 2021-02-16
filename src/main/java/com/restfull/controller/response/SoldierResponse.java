@@ -1,6 +1,9 @@
-package com.restfull.dto;
+package com.restfull.controller.response;
 
-public class Soldier {
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.hateoas.RepresentationModel;
+
+public class SoldierResponse extends RepresentationModel {
     private Long id;
     private String cpf;
     private String name;
@@ -8,10 +11,11 @@ public class Soldier {
     private String weapon;
     private String status;
 
-    public Long getId() {
+    @JsonProperty("id")
+    public Long getResourceId() {
         return id;
     }
-
+    @JsonProperty("id")
     public void setId(Long id) {
         this.id = id;
     }

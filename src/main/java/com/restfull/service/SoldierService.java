@@ -1,57 +1,56 @@
 package com.restfull.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.restfull.controller.request.SoldierEditRequest;
+import com.restfull.controller.response.SoldierListResponse;
+import com.restfull.controller.response.SoldierResponse;
 import com.restfull.dto.Soldier;
+import com.restfull.entitys.SoldierEntity;
+import com.restfull.repository.SoldierRepository;
+import com.restfull.resource.SoldierResource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class SoldierService {
 
-    List<Soldier> soldierList = new ArrayList<>();
-
-    Soldier soldier = new Soldier(1,"Legolas", "Elf", "Archery" );
-
-    Soldier soldier2 = new Soldier(2, "Saruman", "Mage", "Staff");
-
-//    List soldiers = Arrays.asList(soldier, soldier2);
+    @Autowired
+    private SoldierRepository soldierRepository;
+    private ObjectMapper objectMapper;
+    private SoldierResource soldierResource;
 
 
-    public List<Soldier> getSoldierList() {
-        this.soldierList = List.of(soldier, soldier2);
-        return soldierList;
+    public CollectionModel<SoldierListResponse> showAllSoldiers() {
+        List<SoldierEntity> allSoldiers = soldierRepository.findAll();
+        List<SoldierListResponse> soldiersStream = allSoldiers.stream()
+                .map(soldier -> soldierResource.createLink(soldier))
+                .collect(Collectors.toList());
+        return (CollectionModel<SoldierListResponse>) soldiersStream;
+    }
+    public SoldierResponse searchSoldier(Long id) {
+        SoldierEntity soldier = soldierRepository.findById(id).orElseThrow();
+        SoldierResponse soldierResponse = soldierResource.createLinkDetail(soldier);
+        return soldierResponse;
     }
 
-    public void setSoldierList(List<Soldier> soldierList) {
-        this.soldierList.add((Soldier) soldierList);
-    }
-
-    public List<Soldier> showAllSoldiers() {
-
-        return this.soldierList;
-    }
-    public Soldier createNewSoldier(Soldier newSoldier) {
-        this.soldierList.add(newSoldier);
-
-        return newSoldier;
-    }
-
-    public void delete(Integer id) {
-        List<Soldier> soldierFiltered = this.soldierList.stream().filter(soldierID -> soldierID.equals(id)).collect(Collectors.toList());
-
-//        int indexSoldier = soldierList.indexOf(soldierFiltered);
-
-        soldierList.remove(soldierFiltered);
-    }
-
-    public Soldier update(Integer id) {
-        List<Soldier> soldierFiltered = this.soldierList.stream().filter(soldierID -> soldierID.equals(id)).collect(Collectors.toList());
-
-        soldierList.add((Soldier) soldierFiltered);
-
+    public SoldierEntity createNewSoldier(Soldier newSoldier) {
+        SoldierEntity soldier = objectMapper.convertValue(newSoldier, SoldierEntity.class);
+        soldierRepository.save(soldier);
         return soldier;
+    }
+
+    public void delete(Long id) {
+        SoldierEntity soldier = soldierRepository.findById(id).orElseThrow();
+        soldierRepository.delete(soldier);
+    }
+
+    public void update(Long id, SoldierEditRequest soldierEditRequest) {
+        SoldierEntity soldier = objectMapper.convertValue(soldierEditRequest, SoldierEntity.class);
+        soldier.setId(id);
+        soldierRepository.save(soldier);
     }
 }

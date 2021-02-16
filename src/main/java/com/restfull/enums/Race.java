@@ -3,10 +3,10 @@ package com.restfull.enums;
 import java.util.stream.Stream;
 
 public enum Race {
-    HUMAN("human"),
+    DWARF("dwarf"),
     ELF("elf"),
-    ORC("orc"),
-    DWARF("dwarf");
+    HUMAN("human"),
+    ORC("orc");
 
     private String value;
 

@@ -1,6 +1,15 @@
-package com.restfull.dto;
+package com.restfull.entitys;
 
-public class Soldier {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class SoldierEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String cpf;
     private String name;
